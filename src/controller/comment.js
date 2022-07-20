@@ -79,6 +79,11 @@ async function getList(username = '') {
         },
         {
             $unwind: "$netName"   //按用户拆分数据
+        },
+        {
+            $sort: {
+                update_time: -1
+            }
         }
     ])
     return list;
