@@ -4,7 +4,7 @@
 
 const router = require('koa-router')();
 const loginCheck = require('../middleware/loginCheck');
-const { create, getList, del, update } = require('../controller/comment');
+const { create, getList, del, update, getCommentInfo } = require('../controller/comment');
 
 router.prefix('/comment');
 
@@ -28,13 +28,13 @@ router.post('/create', loginCheck, async(ctx, next) =>{
 //更新留言
 router.post('/update', loginCheck, async(ctx, next) =>{
     //获取id, 内容
-    const { _id, content } = ctx.request.body;
+    const { id, content } = ctx.request.body;
     //从token中获取用户
     const { username } = ctx.state.user.data;
 
     //执行更新
     try{
-        const newData = await update(_id, content, username);
+        const newData = await update(id, username, content);
         //接口返回
         ctx.body = {
             status: '000',
@@ -56,13 +56,13 @@ router.post('/update', loginCheck, async(ctx, next) =>{
 //删除留言
 router.post('/del', loginCheck, async(ctx, next) =>{
     //获取id
-    const { _id } = ctx.request.body;
+    const { id } = ctx.request.body;
     //从token中获取用户
     const { username } = ctx.state.user.data;
 
     //执行更新
     try{
-        await del(_id, username);
+        await del(id, username);
         //接口返回
         ctx.body = {
             status: '000',
@@ -84,7 +84,7 @@ router.post('/del', loginCheck, async(ctx, next) =>{
 //查询留言列表
 router.post('/list', loginCheck, async(ctx, next) =>{
     //获取查询条件
-    let { filterType } = ctx.query;
+    let { filterType } = ctx.request.body;
     filterType = parseInt(filterType) || 1;
 
     //从token中获取用户
@@ -103,5 +103,26 @@ router.post('/list', loginCheck, async(ctx, next) =>{
     }
     
 });
+
+//查询留言详情
+router.post('/getCommentInfo', loginCheck, async(ctx, next) =>{
+    //获取查询条件
+    let { id } = ctx.request.body;
+
+    //从token中获取用户
+    let { username } = ctx.state.user.data;
+
+    //获取列表
+    const commentInfo = await getCommentInfo(id, username);
+    console.log(commentInfo)
+    //接口返回
+    ctx.body = {
+        status: '000',
+        data: commentInfo,
+        message: ''
+    }
+    
+});
+
 
 module.exports = router

@@ -17,21 +17,40 @@ async function create(content, username) {
 //更改
 async function update(_id, username, content) {
     //查询并更新
+    console.log(_id, username, content)
     const newData = await Comment.findOneAndUpdate(
         { _id, username },
         { content },
         { new:true }
     )
-    return newData
+
+    return {
+        content: newData.content,
+        update_time: newData.update_time
+    }
 }
 
 //删除
 async function del(_id, username) {
-    await Comment.remove({
+    await Comment.deleteOne({
         _id, 
         username
     });
 }
+
+//获取单个详情
+async function getCommentInfo(_id, username) {
+    let data = await Comment.findOne({
+        _id,
+        username
+    });
+
+    return {
+        content: data.content,
+        update_time: data.update_time
+    }
+}
+
 
 //获取列表
 async function getList(username = '') {
@@ -70,5 +89,6 @@ module.exports = {
     getList,
     del,
     create,
-    update
+    update,
+    getCommentInfo
 }
