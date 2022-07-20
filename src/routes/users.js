@@ -1,5 +1,5 @@
 const router = require('koa-router')()
-const { register, login, getUserInfo, updateUserInfo } = require('../controller/user');
+const { register, login, getUserInfo, updateUserInfo, changePassword } = require('../controller/user');
 const loginCheck = require('../middleware/loginCheck');
 const jwt = require('jsonwebtoken')
 const crypto = require('../utils/crypto/crypto');
@@ -25,6 +25,7 @@ router.get('/getUserInfo', loginCheck, async(ctx, next) =>{
 router.post('/updateUserInfo', loginCheck, async(ctx, next) =>{
     //从token中获取用户
     const { username } = ctx.state.user.data;
+    // console.log(ctx.state.user.data)
     let { userInfo } = ctx.request.body
     userInfo.username = username
     const newUserInfo = await updateUserInfo(userInfo)
@@ -83,7 +84,7 @@ router.post('/login', async(ctx, next) =>{
 //注册
 router.post('/register', async(ctx, next) =>{
     //获取注册信息
-    const { userInfo } = ctx.request.body;
+    let { userInfo } = ctx.request.body;
     userInfo.username = crypto.aesUtil.decryptByAESModeEBC(userInfo.username);
     userInfo.password = crypto.aesUtil.decryptByAESModeEBC(userInfo.password);
     //提交注册  注册逻辑在controller
@@ -100,6 +101,48 @@ router.post('/register', async(ctx, next) =>{
         ctx.body = {
             status: '-1',
             message: '注册失败',
+            data: null
+        }
+    }
+})
+
+//修改密码
+router.post('/changePassword', loginCheck, async(ctx, next) =>{
+    //获取请求信息
+    let { oldPassword, newPassword } = ctx.request.body;
+    oldPassword = crypto.aesUtil.decryptByAESModeEBC(oldPassword);
+    newPassword = crypto.aesUtil.decryptByAESModeEBC(newPassword);
+
+    //从token中获取用户
+    let { _id, username } = ctx.state.user.data;
+
+    console.log(_id, username, oldPassword, newPassword)
+
+    try{
+        let status = await changePassword(_id, username, oldPassword, newPassword); //调用controller
+        switch(status) {
+            case '-1':
+                //验证失败
+                ctx.body = {
+                    status: '-1',
+                    message: '原密码错误',
+                    data: null
+                }
+            break;
+            case '000':
+                ctx.body = {
+                    status: '000',
+                    message: '修改成功',
+                    data: null
+                }
+            break;
+        }
+
+    } catch(ex) {
+        console.log('修改失败', ex);
+        ctx.body = {
+            status: '-1',
+            message: '修改失败',
             data: null
         }
     }

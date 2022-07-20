@@ -17,7 +17,6 @@ async function create(content, username) {
 //更改
 async function update(_id, username, content) {
     //查询并更新
-    console.log(_id, username, content)
     const newData = await Comment.findOneAndUpdate(
         { _id, username },
         { content },

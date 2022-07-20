@@ -17,7 +17,8 @@ async function login(username, password) {
                 status: '000',
                 data: {
                     username: userbypass.username,
-                    netName: userbypass.netName
+                    netName: userbypass.netName,
+                    _id: userbypass._id
                 },
                 message: ''
             }
@@ -81,9 +82,27 @@ async function updateUserInfo(userInfo) {
     }
 }
 
+//更改密码
+async function changePassword(_id, username, oldPassword, newPassword) {
+    //查询并更新
+    const newData = await User.findOneAndUpdate(
+        { _id, username, password: oldPassword },
+        { password: newPassword },
+        { new: true }
+    )
+
+    if(newData){
+        return '000'
+    } else {
+        return '-1'
+    }
+}
+
+
 module.exports = {
     login,
     register,
     getUserInfo,
-    updateUserInfo
+    updateUserInfo,
+    changePassword
 }
