@@ -19,6 +19,8 @@ const users = require('./routes/users')
 const comment = require('./routes/comment')
 const upload = require('./routes/upload')
 const loginCheck = require('./middleware/loginCheck')
+const koaBody = require('koa-body')
+
 
 // error handler
 onerror(app)
@@ -46,6 +48,8 @@ app.use(session({
 app.use(bodyparser({
   enableTypes:['json', 'form', 'text']
 }))
+// app.use(koaBody())
+
 app.use(json())
 app.use(logger())
 app.use(require('koa-static')(__dirname + '/public'))
