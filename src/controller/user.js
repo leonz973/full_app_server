@@ -18,6 +18,7 @@ async function login(username, password) {
                 data: {
                     username: userbypass.username,
                     netName: userbypass.netName,
+                    avatarUrl: userbypass.avatarUrl,
                     _id: userbypass._id
                 },
                 message: ''
@@ -59,7 +60,8 @@ async function getUserInfo(username) {
             $project: {
                 username: 1,
                 gender: 1,
-                netName: 1
+                netName: 1,
+                avatarUrl: 1
             }
         }
     ])
@@ -79,6 +81,20 @@ async function updateUserInfo(userInfo) {
         username: newData.username,
         netName: newData.netName,
         gender: newData.gender
+    }
+}
+
+//更改头像
+async function updateUserAvatar(_id, avatarUrl) {
+    //查询并更新
+    const newData = await User.findOneAndUpdate(
+        { _id },
+        { avatarUrl },
+        { new: true }
+    )
+    return {
+        username: newData.username,
+        avatarUrl: newData.avatarUrl
     }
 }
 
@@ -104,5 +120,6 @@ module.exports = {
     register,
     getUserInfo,
     updateUserInfo,
-    changePassword
+    changePassword,
+    updateUserAvatar
 }

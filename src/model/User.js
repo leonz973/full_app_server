@@ -17,7 +17,8 @@ const UserSchema = mongoose.Schema({
     gender: {
         type: Number,
         default: 0  //0-保密 1-男 2-女
-    }
+    },
+    avatarUrl: String
 }, { timestamps: true });
 
 //mongoose自动创建 user collection

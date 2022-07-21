@@ -74,7 +74,8 @@ async function getList(username = '') {
             $project: {
                 content: 1,
                 update_time: 1,
-                netName: '$user_info.netName'  //从user_info中取值
+                netName: '$user_info.netName',  //从user_info中取值
+                avatarUrl: '$user_info.avatarUrl',  //从user_info中取值
             }
         },
         {

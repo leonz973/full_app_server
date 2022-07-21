@@ -10,9 +10,14 @@ const cors = require('koa2-cors')  //跨域处理
 const koaJwt = require('koa-jwt') //jwt token
 const session = require('koa-generic-session')  //登录设置session
 
+const koaStatic = require('koa-static');
+const path = require('path');
+app.use(koaStatic(path.join(__dirname, './upload'))) //将upload文件夹添加为静态资源路径
+
 const index = require('./routes/index')
 const users = require('./routes/users')
 const comment = require('./routes/comment')
+const upload = require('./routes/upload')
 const loginCheck = require('./middleware/loginCheck')
 
 // error handler
@@ -63,13 +68,14 @@ app.use(loginCheck)
 
 //在next() 前过滤接口 验证token是否过期-如果过期抛出异常401  unless跳过检测登录接口
 app.use(koaJwt({secret:'jwtScrectKey'}).unless({
-    path:[/^\/users\/login/, /^\/users\/register/]		
+    path:[/^\/users\/login/, /^\/users\/register/,]		
 }))
 
 // routes
 app.use(index.routes(), index.allowedMethods())
 app.use(users.routes(), users.allowedMethods())
 app.use(comment.routes(), comment.allowedMethods())
+app.use(upload.routes(), comment.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {
