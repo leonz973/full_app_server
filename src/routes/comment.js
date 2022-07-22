@@ -11,11 +11,11 @@ router.prefix('/comment');
 //创建留言
 router.post('/create', loginCheck, async(ctx, next) =>{
     //获取内容
-    const { content } = ctx.request.body;
+    const { content, pics } = ctx.request.body;
     const { username } = ctx.state.user.data;
 
     //提交留言, 进入controller处理
-    const newComment = await create(content, username)
+    const newComment = await create(content, pics, username)
 
     //接口返回
     ctx.body = {

@@ -8,6 +8,9 @@ const CommentSchema = mongoose.Schema({
         type: String,
         require: true
     },
+    pics: {
+        type: Array
+    },
     update_time: String,
     username: String
 }, { timestamps: true });

@@ -4,13 +4,16 @@ const Comment = require('../model/Comment');
 const Dayjs = require('dayjs')
 
 //新增
-async function create(content, username) {
+async function create(content, pics, username) {
+
     //创建数据库并保存
     const newComment = await Comment.create({
         content,
+        pics,
         username,
         update_time: Dayjs().format('YYYY-MM-DD HH:mm:ss')
     })
+
     return newComment
 }
 
@@ -73,6 +76,7 @@ async function getList(username = '') {
         {
             $project: {
                 content: 1,
+                pics: 1,
                 update_time: 1,
                 netName: '$user_info.netName',  //从user_info中取值
                 avatarUrl: '$user_info.avatarUrl',  //从user_info中取值
